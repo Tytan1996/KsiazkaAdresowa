@@ -9,6 +9,7 @@
 using namespace std;
 
 int numer_Id=0;
+int iloscUzytkownikow=1;
 
 typedef struct kontakt {
 
@@ -41,6 +42,7 @@ void pokaz_wyniki_wyszukiwarki(vector <kontakt> wynikiWyszukiwarki);
 void usunKontak();
 void modyfikujKontakt();
 void wyswietlMenuUzytkownika();
+void wczytajUzytkownikow();
 
 int main() {
 
@@ -469,5 +471,38 @@ void wyswietlMenuUzytkownika() {
         }
     } while(opcja_uzytkownika!=9);
     dodaj_kontakty_do_pliku_tekstowego();
+
+}
+void wczytajUzytkownikow(){
+    fstream plik;
+    plik.open("Adresaci.txt", ios::in);
+    if (plik.good()==false) {
+        return;
+    }
+    string linia, login,haslo;
+    int nr_linii=1, id,numerek,ilosc1;
+    char buffor[50];
+    plik.seekg(0,ios::beg);
+    while(getline(plik,linia)) {
+        for(int i=0; i<3; ++i) {
+            numerek=linia.find("|");
+            ilosc1=linia.copy(buffor,numerek,0);
+            buffor[ilosc1]='\0';
+            linia.erase(0,ilosc1+1);
+            switch(i) {
+            case 0:
+                iloscUzytkownikow=atoi(buffor);
+                numer_Id=id;
+                break;
+            case 1:
+                login=buffor;
+                break;
+            case 2:
+                haslo=buffor;
+                break;
+            }
+        }
+    }
+    plik.close();
 
 }
