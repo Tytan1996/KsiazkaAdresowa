@@ -58,6 +58,7 @@ int main() {
     }
     if(listaUzytkownikow.good()==true){
         plik.close();
+        wczytajUzytkownikow();
     }
 
     dodaj_kontakty_do_pliku_tekstowego();
@@ -504,6 +505,7 @@ void wczytajUzytkownikow(){
                 break;
             }
         }
+        dodanieUzytkonikowDoVectora(id,login,haslo);
     }
     plik.close();
 
