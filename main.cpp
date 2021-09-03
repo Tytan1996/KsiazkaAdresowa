@@ -44,12 +44,16 @@ void wyswietlMenuUzytkownika();
 
 int main() {
 
-    fstream plik;
+    fstream plik,listaUzytkownikow;
     plik.open("Ksiazka_adresowa.txt", ios::in);
+    plik.open("Adresaci.txt", ios::in);
 
     if (plik.good()==true) {
         plik.close();
         wczytac_plik();
+    }
+    if(listaUzytkownikow.good()==true){
+        plik.close();
     }
 
     dodaj_kontakty_do_pliku_tekstowego();
