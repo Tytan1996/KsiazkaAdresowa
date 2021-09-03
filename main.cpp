@@ -40,75 +40,18 @@ vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazw
 void pokaz_wyniki_wyszukiwarki(vector <kontakt> wynikiWyszukiwarki);
 void usunKontak();
 void modyfikujKontakt();
+void wyswietlMenuUzytkownika();
 
 int main() {
 
     fstream plik;
-    int opcja_uzytkownika;
-    string SzukanieImie, SzukanieNazwisko;
     plik.open("Ksiazka_adresowa.txt", ios::in);
 
     if (plik.good()==true) {
         plik.close();
         wczytac_plik();
     }
-    do {
-        cout<<"1 - dodanie nowego kontaktu;"<<endl;
-        cout<<"2 - wyszukiwanie kontaktu po imieniu;"<<endl;
-        cout<<"3 - wyszukiwanie kontaktu po nazwisku;"<<endl;
-        cout<<"4 - wyswietlenie wszystkich kontaktow:"<<endl;
-        cout<<"5 - usun kontakt;"<<endl;
-        cout<<"6 - edytuj kontakt;"<<endl;
-        cout<<"9 - zakonc program;"<<endl;
-        cout<<"Twoja opcja: ";
-        cin>>opcja_uzytkownika;
-        system("cls");
-        switch(opcja_uzytkownika) {
-        case 1:
-            system("cls");
-            wprowadz_dane_do_nowego_kontaktu();
 
-            break;
-        case 2:
-            system("cls");
-            cout<<"Po jakim imieniu szukasz."<<endl;
-            cout<<"Imie: ";
-            cin>>SzukanieImie;
-            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_imieniu_do_wyszukiwarki(SzukanieImie));
-            break;
-        case 3:
-            system("cls");
-            cout<<"Po jakim nazwisku szukasz."<<endl;
-            cout<<"Nazwisko: ";
-            cin>>SzukanieNazwisko;
-            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_nazwisku_do_wyszukiwarki(SzukanieNazwisko));
-            break;
-
-        case 4:
-            system("cls");
-            pokaz_cala_ksiazke_adresowa();
-
-            break;
-        case 5:
-            system("cls");
-            usunKontak();
-            break;
-        case 6:
-            system("cls");
-            modyfikujKontakt();
-            break;
-        case 9:
-            system("cls");
-            cout<<"Program zakonczyl dzialanie."<<endl;
-            dodaj_kontakty_do_pliku_tekstowego();
-            return 0;
-            break;
-
-        default:
-            cout<<"Podales zla opcje!"<<endl<<endl;
-            break;
-        }
-    } while(opcja_uzytkownika!=9);
     dodaj_kontakty_do_pliku_tekstowego();
     return 0;
 }
@@ -458,5 +401,69 @@ void modyfikujKontakt(){
         system("cls");
         cout<<"Prowadzono zmane!"<<endl<<endl;
     }
+
+}
+void wyswietlMenuUzytkownika() {
+
+    int opcja_uzytkownika;
+    string SzukanieImie, SzukanieNazwisko;
+    do {
+        cout<<"1 - dodanie nowego kontaktu;"<<endl;
+        cout<<"2 - wyszukiwanie kontaktu po imieniu;"<<endl;
+        cout<<"3 - wyszukiwanie kontaktu po nazwisku;"<<endl;
+        cout<<"4 - wyswietlenie wszystkich kontaktow:"<<endl;
+        cout<<"5 - usun kontakt;"<<endl;
+        cout<<"6 - edytuj kontakt;"<<endl;
+        cout<<"9 - zakonc program;"<<endl;
+        cout<<"Twoja opcja: ";
+        cin>>opcja_uzytkownika;
+        system("cls");
+        switch(opcja_uzytkownika) {
+        case 1:
+            system("cls");
+            wprowadz_dane_do_nowego_kontaktu();
+
+            break;
+        case 2:
+            system("cls");
+            cout<<"Po jakim imieniu szukasz."<<endl;
+            cout<<"Imie: ";
+            cin>>SzukanieImie;
+            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_imieniu_do_wyszukiwarki(SzukanieImie));
+            break;
+        case 3:
+            system("cls");
+            cout<<"Po jakim nazwisku szukasz."<<endl;
+            cout<<"Nazwisko: ";
+            cin>>SzukanieNazwisko;
+            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_nazwisku_do_wyszukiwarki(SzukanieNazwisko));
+            break;
+
+        case 4:
+            system("cls");
+            pokaz_cala_ksiazke_adresowa();
+
+            break;
+        case 5:
+            system("cls");
+            usunKontak();
+            break;
+        case 6:
+            system("cls");
+            modyfikujKontakt();
+            break;
+        case 9:
+            system("cls");
+            cout<<"Program zakonczyl dzialanie."<<endl;
+            dodaj_kontakty_do_pliku_tekstowego();
+            return;
+            break;
+
+        default:
+            cout<<"Podales zla opcje!"<<endl<<endl;
+            break;
+        }
+    } while(opcja_uzytkownika!=9);
+    dodaj_kontakty_do_pliku_tekstowego();
 
 }
