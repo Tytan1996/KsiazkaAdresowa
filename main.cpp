@@ -20,6 +20,15 @@ typedef struct kontakt {
     string adres;
 
 } Kontakt;
+
+typedef struct uzytkownik{
+
+    int id;
+    string login;
+    string haslo;
+
+}Uzyktownik;
+
 vector <kontakt> ListaKontakow;
 void wczytac_plik();
 void wprowadz_dane_do_nowego_kontaktu();
