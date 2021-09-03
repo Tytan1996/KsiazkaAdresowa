@@ -31,6 +31,7 @@ typedef struct uzytkownik{
 }Uzyktownik;
 
 vector <kontakt> ListaKontakow;
+vector <uzytkownik> ListaUzytkownikow;
 void wczytac_plik();
 void wprowadz_dane_do_nowego_kontaktu();
 void dodaj_nowy_kontakt_do_pamiecy_komputera(string imie, string nazwisko,string numer_telefonu,string email,string adres);
@@ -43,6 +44,7 @@ void usunKontak();
 void modyfikujKontakt();
 void wyswietlMenuUzytkownika();
 void wczytajUzytkownikow();
+void dodanieUzytkonikowDoVectora(int id, string login,string haslo);
 
 int main() {
 
@@ -504,5 +506,11 @@ void wczytajUzytkownikow(){
         }
     }
     plik.close();
+
+}
+void dodanieUzytkonikowDoVectora(int id, string login,string haslo){
+
+    uzytkownik nowyUzytkownik={id,login,haslo};
+    ListaUzytkownikow.push_back(nowyUzytkownik);
 
 }
