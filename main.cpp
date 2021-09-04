@@ -45,6 +45,7 @@ void modyfikujKontakt();
 void wyswietlMenuUzytkownika();
 void wczytajUzytkownikow();
 void dodanieUzytkonikowDoVectora(int id, string login,string haslo);
+void rejestracja();
 
 int main() {
 
@@ -75,6 +76,8 @@ int main() {
         case 1:
             break;
         case 2:
+            system("cls");
+            rejestracja();
             break;
         case 3:
             dodaj_kontakty_do_pliku_tekstowego();
@@ -552,4 +555,13 @@ void dodanieUzytkonikowDoVectora(int id, string login,string haslo) {
     uzytkownik nowyUzytkownik= {id,login,haslo};
     ListaUzytkownikow.push_back(nowyUzytkownik);
 
+}
+void rejestracja(){
+
+    string login,haslo,haslo2;
+    cout<<"Login: ";cin>>login;
+    cout<<"Haslo: ";cin>>haslo;
+    cout<<"Powtorz haslo: ";cin>>haslo2;
+
+    system("cls");
 }
