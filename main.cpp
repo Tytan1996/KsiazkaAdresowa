@@ -573,6 +573,7 @@ void logowanie(){
         if(ListaUzytkownikow[i].login==login){
             if(ListaUzytkownikow[i].haslo==haslo){
                 cout<<"Witaj "<<login<<".\n"<<endl;
+                wyswietlMenuUzytkownika();
                 return;
             }
         }
