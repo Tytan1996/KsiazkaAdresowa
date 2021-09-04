@@ -466,7 +466,8 @@ void wyswietlMenuUzytkownika() {
         cout<<"4 - wyswietlenie wszystkich kontaktow:"<<endl;
         cout<<"5 - usun kontakt;"<<endl;
         cout<<"6 - edytuj kontakt;"<<endl;
-        cout<<"9 - zakonc program;"<<endl;
+        cout<<"7 - zmiana hasla;"<<endl;
+        cout<<"9 - wyloguj sie;"<<endl;
         cout<<"Twoja opcja: ";
         cin>>opcja_uzytkownika;
         system("cls");
@@ -474,7 +475,6 @@ void wyswietlMenuUzytkownika() {
         case 1:
             system("cls");
             wprowadz_dane_do_nowego_kontaktu();
-
             break;
         case 2:
             system("cls");
@@ -504,10 +504,11 @@ void wyswietlMenuUzytkownika() {
             system("cls");
             modyfikujKontakt();
             break;
+        case 7:
+            break;
         case 9:
             system("cls");
-            cout<<"Program zakonczyl dzialanie."<<endl;
-            dodaj_kontakty_do_pliku_tekstowego();
+            cout<<"Wylogowales sie."<<endl;
             return;
             break;
 
@@ -516,7 +517,6 @@ void wyswietlMenuUzytkownika() {
             break;
         }
     } while(opcja_uzytkownika!=9);
-    dodaj_kontakty_do_pliku_tekstowego();
 
 }
 void wczytajUzytkownikow() {
