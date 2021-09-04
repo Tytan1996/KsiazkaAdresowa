@@ -46,6 +46,7 @@ void wyswietlMenuUzytkownika();
 void wczytajUzytkownikow();
 void dodanieUzytkonikowDoVectora(int id, string login,string haslo);
 void rejestracja();
+void logowanie();
 
 int main() {
 
@@ -74,6 +75,8 @@ int main() {
         cin>>opcjaUzytkownika;
         switch(opcjaUzytkownika) {
         case 1:
+            system("cls");
+            logowanie();
             break;
         case 2:
             system("cls");
@@ -577,11 +580,37 @@ void rejestracja() {
         for(int i=0; i<rozmarVectora; ++i) {
             if(ListaUzytkownikow[i].login==login) {
                 cout<<"Juz istnieje uzytkonik o tym loginie\n"<<endl;
-                return;
             }
         }
     }
     dodanieUzytkonikowDoVectora(iloscUzytkownikow,login,haslo);
     iloscUzytkownikow++;
     cout<<"Udalo sie! Mozesz teraz sie zalogowac.\n"<<endl;
+}
+
+void logowanie() {
+
+    if(ListaUzytkownikow.empty()) {
+        cout<<"Nie ma zadnych uzytkonwikow zarejestrowanych.\n"<<endl;
+        return;
+    }
+    string login,haslo;
+    int rozmiarVectora=ListaUzytkownikow.size();
+    cout<<"logowanie\n"<<endl;
+    cout<<"Login: ";
+    cin>>login;
+    cout<<"Haslo: ";
+    cin>>haslo;
+    system("cls");
+
+    for(int i=0; i<rozmiarVectora; ++i) {
+        if(ListaUzytkownikow[i].login==login) {
+            if(ListaUzytkownikow[i].haslo==haslo) {
+                cout<<"Witaj "<<login<<".\n"<<endl;
+                wyswietlMenuUzytkownika();
+                return;
+            }
+        }
+    }
+    cout<<"Zly login lub haslo!\n"<<endl;
 }
