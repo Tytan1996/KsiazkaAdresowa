@@ -558,11 +558,24 @@ void dodanieUzytkonikowDoVectora(int id, string login,string haslo) {
 }
 void logowanie(){
 
+    if(ListaUzytkownikow.empty()){
+        cout<<"Nie ma zadnych uzytkonwikow zarejestrowanych.\n"<<endl;
+        return;
+    }
     string login,haslo;
+    int rozmiarVectora=ListaUzytkownikow.size();
     cout<<"logowanie\n"<<endl;
     cout<<"Login: ";cin>>login;
     cout<<"Haslo: ";cin>>haslo;
-
     system("cls");
 
+    for(int i=0;i<rozmiarVectora;++i){
+        if(ListaUzytkownikow[i].login==login){
+            if(ListaUzytkownikow[i].haslo==haslo){
+                cout<<"Witaj "<<login<<".\n"<<endl;
+                return;
+            }
+        }
+    }
+    cout<<"Zly login lub haslo!\n"<<endl;
 }
