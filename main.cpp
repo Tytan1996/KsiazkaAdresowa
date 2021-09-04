@@ -577,7 +577,11 @@ void rejestracja() {
         for(int i=0; i<rozmarVectora; ++i) {
             if(ListaUzytkownikow[i].login==login) {
                 cout<<"Juz istnieje uzytkonik o tym loginie\n"<<endl;
+                return;
             }
         }
     }
+    dodanieUzytkonikowDoVectora(iloscUzytkownikow,login,haslo);
+    iloscUzytkownikow++;
+    cout<<"Udalo sie! Mozesz teraz sie zalogowac.\n"<<endl;
 }
