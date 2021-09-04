@@ -556,12 +556,28 @@ void dodanieUzytkonikowDoVectora(int id, string login,string haslo) {
     ListaUzytkownikow.push_back(nowyUzytkownik);
 
 }
-void rejestracja(){
+void rejestracja() {
 
     string login,haslo,haslo2;
-    cout<<"Login: ";cin>>login;
-    cout<<"Haslo: ";cin>>haslo;
-    cout<<"Powtorz haslo: ";cin>>haslo2;
+    int rozmarVectora=ListaUzytkownikow.size();
+    cout<<"Login: ";
+    cin>>login;
+    cout<<"Haslo: ";
+    cin>>haslo;
+    cout<<"Powtorz haslo: ";
+    cin>>haslo2;
 
     system("cls");
+
+    if(haslo!=haslo2) {
+        cout<<"Hasla nie sa takie same!\n"<<endl;
+        return;
+    }
+    if(!ListaUzytkownikow.empty()) {
+        for(int i=0; i<rozmarVectora; ++i) {
+            if(ListaUzytkownikow[i].login==login) {
+                cout<<"Juz istnieje uzytkonik o tym loginie\n"<<endl;
+            }
+        }
+    }
 }
