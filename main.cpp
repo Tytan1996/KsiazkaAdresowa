@@ -47,6 +47,7 @@ void wczytajUzytkownikow();
 void dodanieUzytkonikowDoVectora(int id, string login,string haslo);
 void rejestracja();
 void logowanie();
+void zmianaHasla();
 
 int main() {
 
@@ -613,4 +614,17 @@ void logowanie() {
         }
     }
     cout<<"Zly login lub haslo!\n"<<endl;
+}
+void zmianaHasla(){
+
+    string haslo, haslo2;
+    cout<<"podaj nowe haslo: ";cin>>haslo;
+    cout<<"powtorz haslo: ";cin>>haslo2;
+
+    if(haslo!=haslo2){
+        cout<<"Hasla nie sa takie same!";
+        return;
+    }
+
+
 }
