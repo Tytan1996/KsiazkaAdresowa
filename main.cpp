@@ -34,8 +34,8 @@ typedef struct uzytkownik {
 vector <kontakt> ListaKontakow;
 vector <uzytkownik> ListaUzytkownikow;
 void wczytac_plik();
-void wprowadz_dane_do_nowego_kontaktu();
-void dodaj_nowy_kontakt_do_pamiecy_komputera(string imie, string nazwisko,string numer_telefonu,string email,string adres);
+void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika);
+void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu,string email,string adres);
 void dodaj_kontakty_do_pliku_tekstowego();
 void pokaz_cala_ksiazke_adresowa();
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie);
@@ -104,11 +104,11 @@ void wczytac_plik() {
         return;
     }
     string linia, imie,nazwisko,numer_telefonu,email,adres;
-    int nr_linii=1, id,numerek,ilosc1;
+    int nr_linii=1, id,numerek,ilosc1,idUzytkownika;
     char buffor[50];
     plik.seekg(0,ios::beg);
     while(getline(plik,linia)) {
-        for(int i=0; i<6; ++i) {
+        for(int i=0; i<7; ++i) {
             numerek=linia.find("|");
             ilosc1=linia.copy(buffor,numerek,0);
             buffor[ilosc1]='\0';
@@ -119,23 +119,26 @@ void wczytac_plik() {
                 numer_Id=id;
                 break;
             case 1:
-                imie=buffor;
+                idUzytkownika=atoi(buffor);
                 break;
             case 2:
-                nazwisko=buffor;
+                imie=buffor;
                 break;
             case 3:
-                numer_telefonu=buffor;
+                nazwisko=buffor;
                 break;
             case 4:
-                email=buffor;
+                numer_telefonu=buffor;
                 break;
             case 5:
+                email=buffor;
+                break;
+            case 6:
                 adres=buffor;
                 break;
             }
         }
-        dodaj_nowy_kontakt_do_pamiecy_komputera(imie,nazwisko,numer_telefonu,email,adres);
+        dodaj_nowy_kontakt_do_pamiecy_komputera(idUzytkownika,imie,nazwisko,numer_telefonu,email,adres);
 
 
         if(numer_Id>=1000) {
@@ -146,7 +149,7 @@ void wczytac_plik() {
     }
     plik.close();
 }
-void wprowadz_dane_do_nowego_kontaktu() {
+void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika) {
     char znak;
     string imie,nazwisko,numer_telefonu,email,adres;
     if(numer_Id>=1000) {
@@ -184,11 +187,11 @@ void wprowadz_dane_do_nowego_kontaktu() {
     } else if(znak=='t') {
         system("cls");
         numer_Id++;
-        dodaj_nowy_kontakt_do_pamiecy_komputera(imie, nazwisko,numer_telefonu, email, adres);
+        dodaj_nowy_kontakt_do_pamiecy_komputera(idUzytkownika, imie, nazwisko,numer_telefonu, email, adres);
     }
 }
-void dodaj_nowy_kontakt_do_pamiecy_komputera(string imie, string nazwisko,string numer_telefonu, string email,string adres ) {
-    kontakt NowyKontakt= {numer_Id,NULL,imie,nazwisko,numer_telefonu,email,adres};
+void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu, string email,string adres ) {
+    kontakt NowyKontakt= {numer_Id,idUzytkownika,imie,nazwisko,numer_telefonu,email,adres};
     ListaKontakow.push_back(NowyKontakt);
 
 }
@@ -476,7 +479,7 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
         switch(opcja_uzytkownika) {
         case 1:
             system("cls");
-            wprowadz_dane_do_nowego_kontaktu();
+            wprowadz_dane_do_nowego_kontaktu(zalogowanyUzytkownik->id);
             break;
         case 2:
             system("cls");
