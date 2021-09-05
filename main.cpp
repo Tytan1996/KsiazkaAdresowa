@@ -37,7 +37,7 @@ void wczytac_plik();
 void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika);
 void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu,string email,string adres);
 void dodaj_kontakty_do_pliku_tekstowego();
-void pokaz_cala_ksiazke_adresowa();
+void pokaz_cala_ksiazke_adresowa(int idUzytkownika);
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie);
 vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko);
 void pokaz_wyniki_wyszukiwarki(vector <kontakt> wynikiWyszukiwarki);
@@ -215,23 +215,31 @@ void dodaj_kontakty_do_pliku_tekstowego () {
     plik.close();
 
 }
-void pokaz_cala_ksiazke_adresowa() {
+void pokaz_cala_ksiazke_adresowa(int idUzytkownika) {
     char znak;
+    bool zeroKontaktow=true;
     int opcja_uzykownika,iloscElementow;
     if(ListaKontakow.empty()) {
         system("cls");
         cout<<"Nie masz zadnych kontakow"<<endl<<endl;
     } else {
+
         iloscElementow=ListaKontakow.size();
         for(int i=0; i<iloscElementow; ++i) {
-            cout<<ListaKontakow[i].id<<endl;
-            cout<<ListaKontakow[i].imie<<endl;
-            cout<<ListaKontakow[i].nazwisko<<endl;
-            cout<<ListaKontakow[i].numer_telefonu<<endl;
-            cout<<ListaKontakow[i].email<<endl;
-            cout<<ListaKontakow[i].adres<<endl;
-            cout<<endl;
+            if(idUzytkownika==ListaKontakow[i].idUzytkownika){
+                zeroKontaktow=false;
+                cout<<ListaKontakow[i].id<<endl;
+                cout<<ListaKontakow[i].imie<<endl;
+                cout<<ListaKontakow[i].nazwisko<<endl;
+                cout<<ListaKontakow[i].numer_telefonu<<endl;
+                cout<<ListaKontakow[i].email<<endl;
+                cout<<ListaKontakow[i].adres<<endl;
+                cout<<endl;
+            }
         }
+    }
+    if(zeroKontaktow==false){
+        cout<<"Nie masz zadnych kontaktow."<<endl;
     }
 }
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie) {
@@ -499,7 +507,7 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
 
         case 4:
             system("cls");
-            pokaz_cala_ksiazke_adresowa();
+            pokaz_cala_ksiazke_adresowa(zalogowanyUzytkownik->id);
 
             break;
         case 5:
