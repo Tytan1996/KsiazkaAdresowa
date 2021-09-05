@@ -49,6 +49,7 @@ void dodanieUzytkonikowDoVectora(int id, string login,string haslo);
 void rejestracja();
 void logowanie();
 void zmianaHasla(uzytkownik *zalogowanyUzytkownik);
+void zapisUzytkownikowDoPliku();
 
 int main() {
 
@@ -86,6 +87,7 @@ int main() {
             break;
         case 3:
             dodaj_kontakty_do_pliku_tekstowego();
+            zapisUzytkownikowDoPliku();
             return 0;
             break;
         default:
@@ -95,6 +97,7 @@ int main() {
         }
     } while(opcjaUzytkownika!=3);
     dodaj_kontakty_do_pliku_tekstowego();
+    zapisUzytkownikowDoPliku();
     return 0;
 }
 void wczytac_plik() {
@@ -668,4 +671,19 @@ void zmianaHasla(uzytkownik *zalogowanyUzytkownik){
             return;
         }
     }
+}
+void zapisUzytkownikowDoPliku(){
+
+    ofstream plik;
+    plik.open("Adresaci.txt", ios::out);
+    for(int i=0; i<iloscUzytkownikow-1; ++i) {
+
+        plik<<ListaUzytkownikow[i].id<<"|";
+        plik<<ListaUzytkownikow[i].login<<"|";
+        plik<<ListaUzytkownikow[i].haslo<<"|"<<endl;
+
+    }
+
+    plik.close();
+
 }
