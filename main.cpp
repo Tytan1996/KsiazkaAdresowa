@@ -14,6 +14,7 @@ int iloscUzytkownikow=1;
 typedef struct kontakt {
 
     int id;
+    int idUzytkownika;
     string imie;
     string nazwisko;
     string numer_telefonu;
@@ -187,7 +188,7 @@ void wprowadz_dane_do_nowego_kontaktu() {
     }
 }
 void dodaj_nowy_kontakt_do_pamiecy_komputera(string imie, string nazwisko,string numer_telefonu, string email,string adres ) {
-    kontakt NowyKontakt= {numer_Id,imie,nazwisko,numer_telefonu,email,adres};
+    kontakt NowyKontakt= {numer_Id,NULL,imie,nazwisko,numer_telefonu,email,adres};
     ListaKontakow.push_back(NowyKontakt);
 
 }
@@ -402,31 +403,31 @@ void modyfikujKontakt() {
             cout<<"Podaj imie."<<endl;
             cout<<"Imie: ";
             cin>>imie;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 2:
             cout<<"Podaj nazwisko."<<endl;
             cout<<"Nazwisko: ";
             cin>>nazwisko;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,ListaKontakow[numerUzytkownika].imie,nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 3:
             cout<<"Podaj numer telefonu."<<endl;
             cout<<"Numer telefonu: ";
             cin>>numerTelefonu;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,numerTelefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,numerTelefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 4:
             cout<<"Podaj email."<<endl;
             cout<<"Email: ";
             cin>>email;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 5:
             cout<<"Podaj adres."<<endl;
             cout<<"Adres: ";
             cin>>adres;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,adres};
             break;
         case 6:
             cout<<"Prosze podac poprawnie informacje."<<endl;
@@ -440,7 +441,7 @@ void modyfikujKontakt() {
             cin>>email;
             cout<<"Adres: ";
             cin>>adres;
-            ZmanaKontaktu= {numer_Id,imie,nazwisko,numerTelefonu,email,adres};
+            ZmanaKontaktu= {numer_Id,NULL,imie,nazwisko,numerTelefonu,email,adres};
         default:
             cout<<"Wybrano zla opcje!"<<endl;
             return;
