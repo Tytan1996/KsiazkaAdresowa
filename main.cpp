@@ -341,6 +341,7 @@ void usunKontakt(int idUzytkownika) {
     }
     if(!jestKontakt){
         cout<<"Nie masz zadnych kontaktow.\n"<<endl;
+        return;
     }
     cout<<ListaKontakow[numerKontaktuDoUsunecia].id<<endl;
     cout<<ListaKontakow[numerKontaktuDoUsunecia].imie<<endl;
