@@ -203,6 +203,7 @@ void dodaj_kontakty_do_pliku_tekstowego () {
     for(int i=0; i<iloscKontakow; ++i) {
 
         plik<<ListaKontakow[i].id<<"|";
+        plik<<ListaKontakow[i].idUzytkownika<<"|";
         plik<<ListaKontakow[i].imie<<"|";
         plik<<ListaKontakow[i].nazwisko<<"|";
         plik<<ListaKontakow[i].numer_telefonu<<"|";
