@@ -41,7 +41,7 @@ void pokaz_cala_ksiazke_adresowa(int idUzytkownika);
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie);
 vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko);
 void pokaz_wyniki_wyszukiwarki(vector <kontakt> wynikiWyszukiwarki);
-void usunKontak();
+void usunKontakt(int idUzytkownika);
 void modyfikujKontakt();
 void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik);
 void wczytajUzytkownikow();
@@ -283,9 +283,10 @@ void pokaz_wyniki_wyszukiwarki(vector <kontakt> WynikiWyszukiwarki) {
 
     }
 }
-void usunKontak() {
+void usunKontakt(int idUzytkownika) {
     char potwierdzenie='n';
-    int opcjaUzytkonika,numerekID,numerKontaktuDoUsunecia;
+    bool jestKontakt=false;
+    int opcjaUzytkonika,numerekID,numerKontaktuDoUsunecia,iloscKontaktow=numerekID-1;
     if(ListaKontakow.empty()) {
         cout<<"Nie masz zadnych kontaktow."<<endl<<endl;
         return;
@@ -296,19 +297,24 @@ void usunKontak() {
     cout<<"0 - powrot do menu;"<<endl;
     cout<<"Twoja opcja: ";
     cin>>opcjaUzytkonika;
-    cout<<"Czy na pewno chcesz ten kontakt usunac? Potwierdz guzikem 't'"<<endl;
-    potwierdzenie=getch();
-    if(potwierdzenie!='t') {
-        system("cls");
-        cout<<"Nie usuneto elementu"<<endl<<endl;
-        return;
-    }
     switch(opcjaUzytkonika) {
     case 1:
-        numerKontaktuDoUsunecia=0;
+        for(int i=0;i<iloscKontaktow;++i){
+            if(idUzytkownika==ListaKontakow[i].idUzytkownika){
+                numerKontaktuDoUsunecia=i;
+                jestKontakt=true;
+                break;
+            }
+        }
         break;
     case 2:
-        numerKontaktuDoUsunecia=numerekID-1;
+        for(int i=iloscKontaktow;i>=0;--i){
+            if(idUzytkownika==ListaKontakow[i].idUzytkownika){
+                numerKontaktuDoUsunecia==i;
+                jestKontakt=true;
+                break;
+            }
+        }
         break;
     case 3:
         cout<<"Podaj nume id kontaktu, ktory chcesz usunac. Od 1 do "<<numer_Id<<"."<<endl;
@@ -323,10 +329,18 @@ void usunKontak() {
             return;
         }
         numerKontaktuDoUsunecia=numerekID-1;
+        if(ListaKontakow[numerKontaktuDoUsunecia].idUzytkownika!=idUzytkownika){
+            cout<<"Nie mozesz tego kontaktu usunac!\n"<<endl;
+            return;
+        }
+        jestKontakt=true;
         break;
     default:
         cout<<"Wybrano zla opcje!"<<endl<<endl;
         return;
+    }
+    if(!jestKontakt){
+        cout<<"Nie masz zadnych kontaktow.\n"<<endl;
     }
     cout<<ListaKontakow[numerKontaktuDoUsunecia].id<<endl;
     cout<<ListaKontakow[numerKontaktuDoUsunecia].imie<<endl;
@@ -335,7 +349,7 @@ void usunKontak() {
     cout<<ListaKontakow[numerKontaktuDoUsunecia].email<<endl;
     cout<<ListaKontakow[numerKontaktuDoUsunecia].adres<<endl;
     potwierdzenie=='n';
-    cout<<"Czy jestes pewny ze ten kontakt chcesz usunac? Potwierdz znowu guzikem 't'"<<endl;
+    cout<<"Czy jestes pewny ze ten kontakt chcesz usunac? Potwierdz guzikem 't'"<<endl;
     potwierdzenie=getch();
     if(potwierdzenie!='t') {
         system("cls");
@@ -512,7 +526,7 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
             break;
         case 5:
             system("cls");
-            usunKontak();
+            usunKontakt(zalogowanyUzytkownik->id);
             break;
         case 6:
             system("cls");
