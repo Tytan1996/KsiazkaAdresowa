@@ -38,8 +38,8 @@ void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika);
 void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu,string email,string adres);
 void dodaj_kontakty_do_pliku_tekstowego();
 void pokaz_cala_ksiazke_adresowa(int idUzytkownika);
-vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie);
-vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko);
+vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie, int idUzytkownika);
+vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko, int idUzytkownika);
 void pokaz_wyniki_wyszukiwarki(vector <kontakt> wynikiWyszukiwarki);
 void usunKontakt(int idUzytkownika);
 void modyfikujKontakt();
@@ -242,21 +242,21 @@ void pokaz_cala_ksiazke_adresowa(int idUzytkownika) {
         cout<<"Nie masz zadnych kontaktow."<<endl;
     }
 }
-vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie) {
+vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie, int idUzytkownika) {
     vector<kontakt>WynikiWyszukiwarki;
     int iloscElementow=ListaKontakow.size();
     for(int i=0; i<iloscElementow; ++i) {
-        if(ListaKontakow[i].imie==szukanie_imie) {
+        if(ListaKontakow[i].imie==szukanie_imie && ListaKontakow[i].idUzytkownika==idUzytkownika) {
             WynikiWyszukiwarki.push_back(ListaKontakow[i]);
         }
     }
     return WynikiWyszukiwarki;
 }
-vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko) {
+vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko, int idUzytkownika) {
     vector<kontakt>WynikiWyszukiwarki;
     int iloscElementow=ListaKontakow.size();
     for(int i=0; i<iloscElementow; ++i) {
-        if(ListaKontakow[i].nazwisko==szukanie_nazwisko) {
+        if(ListaKontakow[i].nazwisko==szukanie_nazwisko && ListaKontakow[i].idUzytkownika==idUzytkownika) {
             WynikiWyszukiwarki.push_back(ListaKontakow[i]);
         }
     }
@@ -510,14 +510,14 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
             cout<<"Po jakim imieniu szukasz."<<endl;
             cout<<"Imie: ";
             cin>>SzukanieImie;
-            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_imieniu_do_wyszukiwarki(SzukanieImie));
+            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_imieniu_do_wyszukiwarki(SzukanieImie,zalogowanyUzytkownik->id));
             break;
         case 3:
             system("cls");
             cout<<"Po jakim nazwisku szukasz."<<endl;
             cout<<"Nazwisko: ";
             cin>>SzukanieNazwisko;
-            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_nazwisku_do_wyszukiwarki(SzukanieNazwisko));
+            pokaz_wyniki_wyszukiwarki(dodanie_wyniku_po_nazwisku_do_wyszukiwarki(SzukanieNazwisko,zalogowanyUzytkownik->id));
             break;
 
         case 4:
