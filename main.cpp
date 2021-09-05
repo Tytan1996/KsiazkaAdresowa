@@ -42,12 +42,12 @@ vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazw
 void pokaz_wyniki_wyszukiwarki(vector <kontakt> wynikiWyszukiwarki);
 void usunKontak();
 void modyfikujKontakt();
-void wyswietlMenuUzytkownika();
+void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik);
 void wczytajUzytkownikow();
 void dodanieUzytkonikowDoVectora(int id, string login,string haslo);
 void rejestracja();
 void logowanie();
-void zmianaHasla();
+void zmianaHasla(uzytkownik *zalogowanyUzytkownik);
 
 int main() {
 
@@ -456,7 +456,7 @@ void modyfikujKontakt() {
     }
 
 }
-void wyswietlMenuUzytkownika() {
+void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
 
     int opcja_uzytkownika;
     string SzukanieImie, SzukanieNazwisko;
@@ -506,6 +506,7 @@ void wyswietlMenuUzytkownika() {
             modyfikujKontakt();
             break;
         case 7:
+            zmianaHasla(zalogowanyUzytkownik);
             break;
         case 9:
             system("cls");
@@ -597,6 +598,7 @@ void logowanie() {
     }
     string login,haslo;
     int rozmiarVectora=ListaUzytkownikow.size();
+    uzytkownik *zalogowanyUzytkownik;
     cout<<"logowanie\n"<<endl;
     cout<<"Login: ";
     cin>>login;
@@ -608,23 +610,34 @@ void logowanie() {
         if(ListaUzytkownikow[i].login==login) {
             if(ListaUzytkownikow[i].haslo==haslo) {
                 cout<<"Witaj "<<login<<".\n"<<endl;
-                wyswietlMenuUzytkownika();
+                zalogowanyUzytkownik=&ListaUzytkownikow[i];
+                wyswietlMenuUzytkownika(zalogowanyUzytkownik);
                 return;
             }
         }
     }
     cout<<"Zly login lub haslo!\n"<<endl;
 }
-void zmianaHasla(){
+void zmianaHasla(uzytkownik *zalogowanyUzytkownik){
 
     string haslo, haslo2;
+    uzytkownik ZmanaUzytkownika;
+    int iloscKont=ListaUzytkownikow.size();
     cout<<"podaj nowe haslo: ";cin>>haslo;
     cout<<"powtorz haslo: ";cin>>haslo2;
 
+    system("cls");
     if(haslo!=haslo2){
         cout<<"Hasla nie sa takie same!";
         return;
     }
-
-
+    ZmanaUzytkownika={zalogowanyUzytkownik->id,zalogowanyUzytkownik->login,haslo};
+    for(int i=0;i<iloscKont;++i){
+        if(zalogowanyUzytkownik->id==ListaUzytkownikow[i].id){
+            ListaUzytkownikow.erase(ListaUzytkownikow.begin()+i);
+            ListaUzytkownikow.insert(ListaUzytkownikow.begin()+i,ZmanaUzytkownika);
+            cout<<"Haslo zostalo zmienione.\n"<<endl;
+            return;
+        }
+    }
 }
