@@ -56,14 +56,14 @@ int main() {
     int opcjaUzytkownika;
     fstream plik,listaUzytkownikow;
     plik.open("Ksiazka_adresowa.txt", ios::in);
-    plik.open("Adresaci.txt", ios::in);
+    listaUzytkownikow.open("Adresaci.txt", ios::in);
 
     if (plik.good()==true) {
         plik.close();
         wczytac_plik();
     }
     if(listaUzytkownikow.good()==true) {
-        plik.close();
+        listaUzytkownikow.close();
         wczytajUzytkownikow();
     }
 
@@ -225,6 +225,7 @@ void pokaz_cala_ksiazke_adresowa(int idUzytkownika) {
     if(ListaKontakow.empty()) {
         system("cls");
         cout<<"Nie masz zadnych kontakow"<<endl<<endl;
+        return;
     } else {
 
         iloscElementow=ListaKontakow.size();
@@ -241,8 +242,8 @@ void pokaz_cala_ksiazke_adresowa(int idUzytkownika) {
             }
         }
     }
-    if(zeroKontaktow==false){
-        cout<<"Nie masz zadnych kontaktow."<<endl;
+    if(zeroKontaktow){
+        cout<<"Nie masz zadnych kontaktow.\n"<<endl;
     }
 }
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie, int idUzytkownika) {
@@ -311,7 +312,7 @@ void usunKontakt(int idUzytkownika) {
         }
         break;
     case 2:
-        for(int i=iloscKontaktow;i>=0;--i){
+        for(int i=iloscKontaktow-1;i>=0;--i){
             if(idUzytkownika==ListaKontakow[i].idUzytkownika){
                 numerKontaktuDoUsunecia==i;
                 jestKontakt=true;
@@ -526,7 +527,6 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
         case 4:
             system("cls");
             pokaz_cala_ksiazke_adresowa(zalogowanyUzytkownik->id);
-
             break;
         case 5:
             system("cls");
@@ -541,7 +541,7 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
             break;
         case 9:
             system("cls");
-            cout<<"Wylogowales sie."<<endl;
+            cout<<"Wylogowales sie.\n"<<endl;
             return;
             break;
 
@@ -571,7 +571,6 @@ void wczytajUzytkownikow() {
             switch(i) {
             case 0:
                 iloscUzytkownikow=atoi(buffor);
-                numer_Id=id;
                 break;
             case 1:
                 login=buffor;
@@ -581,7 +580,8 @@ void wczytajUzytkownikow() {
                 break;
             }
         }
-        dodanieUzytkonikowDoVectora(id,login,haslo);
+        dodanieUzytkonikowDoVectora(iloscUzytkownikow,login,haslo);
+        iloscUzytkownikow++;
     }
     plik.close();
 
@@ -613,6 +613,7 @@ void rejestracja() {
         for(int i=0; i<rozmarVectora; ++i) {
             if(ListaUzytkownikow[i].login==login) {
                 cout<<"Juz istnieje uzytkonik o tym loginie\n"<<endl;
+                return;
             }
         }
     }
@@ -620,7 +621,6 @@ void rejestracja() {
     iloscUzytkownikow++;
     cout<<"Udalo sie! Mozesz teraz sie zalogowac.\n"<<endl;
 }
-
 void logowanie() {
 
     if(ListaUzytkownikow.empty()) {
@@ -683,7 +683,5 @@ void zapisUzytkownikowDoPliku(){
         plik<<ListaUzytkownikow[i].haslo<<"|"<<endl;
 
     }
-
     plik.close();
-
 }
