@@ -33,7 +33,7 @@ typedef struct uzytkownik {
 
 vector <kontakt> ListaKontakow;
 vector <uzytkownik> ListaUzytkownikow;
-void wczytac_plik();
+void wczytac_plik(int idUzytkownika);
 void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika);
 void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu,string email,string adres);
 void dodaj_kontakty_do_pliku_tekstowego();
@@ -54,14 +54,9 @@ void zapisUzytkownikowDoPliku();
 int main() {
 
     int opcjaUzytkownika;
-    fstream plik,listaUzytkownikow;
-    plik.open("Ksiazka_adresowa.txt", ios::in);
+    fstream listaUzytkownikow;
     listaUzytkownikow.open("Adresaci.txt", ios::in);
 
-    if (plik.good()==true) {
-        plik.close();
-        wczytac_plik();
-    }
     if(listaUzytkownikow.good()==true) {
         listaUzytkownikow.close();
         wczytajUzytkownikow();
@@ -100,9 +95,10 @@ int main() {
     zapisUzytkownikowDoPliku();
     return 0;
 }
-void wczytac_plik() {
-    fstream plik;
+void wczytac_plik(int idZalogowaniego) {
+    fstream plik,plikTymczasowy;
     plik.open("Ksiazka_adresowa.txt", ios::in);
+    plikTymczasowy.open("Adresaci_tymczasowy.txt",ios::out);
     if (plik.good()==false) {
         return;
     }
@@ -111,6 +107,7 @@ void wczytac_plik() {
     char buffor[50];
     plik.seekg(0,ios::beg);
     while(getline(plik,linia)) {
+        plikTymczasowy<<linia<<endl;
         for(int i=0; i<7; ++i) {
             numerek=linia.find("|");
             ilosc1=linia.copy(buffor,numerek,0);
@@ -141,8 +138,9 @@ void wczytac_plik() {
                 break;
             }
         }
-        dodaj_nowy_kontakt_do_pamiecy_komputera(idUzytkownika,imie,nazwisko,numer_telefonu,email,adres);
-
+        if(idUzytkownika==idZalogowaniego){
+            dodaj_nowy_kontakt_do_pamiecy_komputera(idUzytkownika,imie,nazwisko,numer_telefonu,email,adres);
+        }
 
         if(numer_Id>=1000) {
             cout<<"Masz pelna liste!"<<endl;
@@ -150,7 +148,9 @@ void wczytac_plik() {
             return;
         }
     }
+    plikTymczasowy.close();
     plik.close();
+
 }
 void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika) {
     char znak;
@@ -490,6 +490,13 @@ void modyfikujKontakt() {
 }
 void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
 
+    fstream plik;
+    plik.open("Ksiazka_adresowa.txt", ios::in);
+
+    if (plik.good()==true) {
+        plik.close();
+        wczytac_plik(zalogowanyUzytkownik->id);
+    }
     int opcja_uzytkownika;
     string SzukanieImie, SzukanieNazwisko;
     do {
