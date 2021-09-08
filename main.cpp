@@ -6,6 +6,7 @@
 #include <conio.h>
 #include <vector>
 
+
 using namespace std;
 
 int numer_Id=0;
@@ -33,16 +34,17 @@ typedef struct uzytkownik {
 
 vector <kontakt> ListaKontakow;
 vector <uzytkownik> ListaUzytkownikow;
+vector <int> idUsunietychKontaktow;
 void wczytac_plik(int idUzytkownika);
-void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika);
+void wprowadz_dane_do_nowego_kontaktu();
 void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu,string email,string adres);
 void dodaj_kontakty_do_pliku_tekstowego();
-void pokaz_cala_ksiazke_adresowa(int idUzytkownika);
+void pokaz_cala_ksiazke_adresowa();
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie, int idUzytkownika);
 vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko, int idUzytkownika);
 void pokaz_wyniki_wyszukiwarki(vector <kontakt> wynikiWyszukiwarki);
-void usunKontakt(int idUzytkownika);
-void modyfikujKontakt();
+void usunKontakt();
+void modyfikujKontakt(int idUzytkownika);
 void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik);
 void wczytajUzytkownikow();
 void dodanieUzytkonikowDoVectora(int id, string login,string haslo);
@@ -81,7 +83,6 @@ int main() {
             rejestracja();
             break;
         case 3:
-            dodaj_kontakty_do_pliku_tekstowego();
             zapisUzytkownikowDoPliku();
             return 0;
             break;
@@ -91,14 +92,12 @@ int main() {
             break;
         }
     } while(opcjaUzytkownika!=3);
-    dodaj_kontakty_do_pliku_tekstowego();
     zapisUzytkownikowDoPliku();
     return 0;
 }
 void wczytac_plik(int idZalogowaniego) {
     fstream plik,plikTymczasowy;
     plik.open("Ksiazka_adresowa.txt", ios::in);
-    plikTymczasowy.open("Adresaci_tymczasowy.txt",ios::out);
     if (plik.good()==false) {
         return;
     }
@@ -107,7 +106,6 @@ void wczytac_plik(int idZalogowaniego) {
     char buffor[50];
     plik.seekg(0,ios::beg);
     while(getline(plik,linia)) {
-        plikTymczasowy<<linia<<endl;
         for(int i=0; i<7; ++i) {
             numerek=linia.find("|");
             ilosc1=linia.copy(buffor,numerek,0);
@@ -138,7 +136,7 @@ void wczytac_plik(int idZalogowaniego) {
                 break;
             }
         }
-        if(idUzytkownika==idZalogowaniego){
+        if(idUzytkownika==idZalogowaniego) {
             dodaj_nowy_kontakt_do_pamiecy_komputera(idUzytkownika,imie,nazwisko,numer_telefonu,email,adres);
         }
 
@@ -148,7 +146,6 @@ void wczytac_plik(int idZalogowaniego) {
             return;
         }
     }
-    plikTymczasowy.close();
     plik.close();
 
 }
@@ -200,27 +197,66 @@ void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, str
 }
 void dodaj_kontakty_do_pliku_tekstowego () {
 
-    ofstream plik;
+    fstream plik,plikTymcasowy;
     int iloscKontakow=ListaKontakow.size();
-    plik.open("Ksiazka_adresowa.txt", ios::out);
-    for(int i=0; i<iloscKontakow; ++i) {
-
-        plik<<ListaKontakow[i].id<<"|";
-        plik<<ListaKontakow[i].idUzytkownika<<"|";
-        plik<<ListaKontakow[i].imie<<"|";
-        plik<<ListaKontakow[i].nazwisko<<"|";
-        plik<<ListaKontakow[i].numer_telefonu<<"|";
-        plik<<ListaKontakow[i].email<<"|";
-        plik<<ListaKontakow[i].adres<<"|"<<endl;
+    int iloscUsunietychKontaktow=idUsunietychKontaktow.size();
+    int idKontaktu,numerek,ilosc1;
+    bool kontaktZapisany=false,usunietyKontakt=false;
+    string linia;
+    char buffor[50];
+    plik.open("Ksiazka_adresowa.txt", ios::in);
+    plikTymcasowy.open("Adresaci_tymczasowy.txt",ios::out);
+    plik.seekg(0,ios::beg);
+    while(getline(plik,linia)) {
+        numerek=linia.find("|");
+        ilosc1=linia.copy(buffor,numerek,0);
+        buffor[ilosc1]='\0';
+        idKontaktu=atoi(buffor);
+        if(!ListaKontakow.empty()) {
+            if(idKontaktu==ListaKontakow[0].id) {
+                plikTymcasowy<<ListaKontakow[0].id<<"|";
+                plikTymcasowy<<ListaKontakow[0].idUzytkownika<<"|";
+                plikTymcasowy<<ListaKontakow[0].imie<<"|";
+                plikTymcasowy<<ListaKontakow[0].nazwisko<<"|";
+                plikTymcasowy<<ListaKontakow[0].numer_telefonu<<"|";
+                plikTymcasowy<<ListaKontakow[0].email<<"|";
+                plikTymcasowy<<ListaKontakow[0].adres<<"|"<<endl;
+                ListaKontakow.erase(ListaKontakow.begin());
+                kontaktZapisany=true;
+            }
+        }
+        for(int j=0;j<iloscUsunietychKontaktow;++j){
+            if(idKontaktu==idUsunietychKontaktow[j]){
+                usunietyKontakt=true;
+            }
+        }
+        if(!kontaktZapisany && !usunietyKontakt) {
+            plikTymcasowy<<linia<<endl;
+        }
+        kontaktZapisany=false;
+        usunietyKontakt=false;
 
     }
+    iloscKontakow=ListaKontakow.size();
+    for(int i=0; i<iloscKontakow; ++i) {
 
+        plikTymcasowy<<ListaKontakow[i].id<<"|";
+        plikTymcasowy<<ListaKontakow[i].idUzytkownika<<"|";
+        plikTymcasowy<<ListaKontakow[i].imie<<"|";
+        plikTymcasowy<<ListaKontakow[i].nazwisko<<"|";
+        plikTymcasowy<<ListaKontakow[i].numer_telefonu<<"|";
+        plikTymcasowy<<ListaKontakow[i].email<<"|";
+        plikTymcasowy<<ListaKontakow[i].adres<<"|"<<endl;
+
+    }
+    ListaKontakow.clear();
     plik.close();
-
+    remove("Ksiazka_adresowa.txt");
+    plikTymcasowy.close();
+    rename("Adresaci_tymczasowy.txt", "Ksiazka_adresowa.txt");
 }
-void pokaz_cala_ksiazke_adresowa(int idUzytkownika) {
+void pokaz_cala_ksiazke_adresowa() {
     char znak;
-    bool zeroKontaktow=true;
     int opcja_uzykownika,iloscElementow;
     if(ListaKontakow.empty()) {
         system("cls");
@@ -230,20 +266,14 @@ void pokaz_cala_ksiazke_adresowa(int idUzytkownika) {
 
         iloscElementow=ListaKontakow.size();
         for(int i=0; i<iloscElementow; ++i) {
-            if(idUzytkownika==ListaKontakow[i].idUzytkownika){
-                zeroKontaktow=false;
-                cout<<ListaKontakow[i].id<<endl;
-                cout<<ListaKontakow[i].imie<<endl;
-                cout<<ListaKontakow[i].nazwisko<<endl;
-                cout<<ListaKontakow[i].numer_telefonu<<endl;
-                cout<<ListaKontakow[i].email<<endl;
-                cout<<ListaKontakow[i].adres<<endl;
-                cout<<endl;
-            }
+            cout<<ListaKontakow[i].id<<endl;
+            cout<<ListaKontakow[i].imie<<endl;
+            cout<<ListaKontakow[i].nazwisko<<endl;
+            cout<<ListaKontakow[i].numer_telefonu<<endl;
+            cout<<ListaKontakow[i].email<<endl;
+            cout<<ListaKontakow[i].adres<<endl;
+            cout<<endl;
         }
-    }
-    if(zeroKontaktow){
-        cout<<"Nie masz zadnych kontaktow.\n"<<endl;
     }
 }
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie, int idUzytkownika) {
@@ -287,10 +317,11 @@ void pokaz_wyniki_wyszukiwarki(vector <kontakt> WynikiWyszukiwarki) {
 
     }
 }
-void usunKontakt(int idUzytkownika) {
+void usunKontakt() {
     char potwierdzenie='n';
     bool jestKontakt=false;
-    int opcjaUzytkonika,numerekID,numerKontaktuDoUsunecia,iloscKontaktow=numerekID-1;
+    int iloscKotanktowUzytkownika=ListaKontakow.size();
+    int opcjaUzytkonika,numerekID,numerKontaktuDoUsunecia;
     if(ListaKontakow.empty()) {
         cout<<"Nie masz zadnych kontaktow."<<endl<<endl;
         return;
@@ -303,24 +334,12 @@ void usunKontakt(int idUzytkownika) {
     cin>>opcjaUzytkonika;
     switch(opcjaUzytkonika) {
     case 1:
-        for(int i=0;i<iloscKontaktow;++i){
-            if(idUzytkownika==ListaKontakow[i].idUzytkownika){
-                numerKontaktuDoUsunecia=i;
-                jestKontakt=true;
-                break;
-            }
-        }
+        numerKontaktuDoUsunecia=0;
         break;
     case 2:
-        for(int i=iloscKontaktow-1;i>=0;--i){
-            if(idUzytkownika==ListaKontakow[i].idUzytkownika){
-                numerKontaktuDoUsunecia==i;
-                jestKontakt=true;
-                break;
-            }
-        }
+        numerKontaktuDoUsunecia=iloscKotanktowUzytkownika-1;
         break;
-    case 3:
+    case 3: {
         cout<<"Podaj nume id kontaktu, ktory chcesz usunac. Od 1 do "<<numer_Id<<"."<<endl;
         cout<<"Id: ";
         cin>>numerekID;
@@ -332,20 +351,23 @@ void usunKontakt(int idUzytkownika) {
             cout<<"Podales zbyt maly numer ID!."<<endl<<endl;
             return;
         }
-        numerKontaktuDoUsunecia=numerekID-1;
-        if(ListaKontakow[numerKontaktuDoUsunecia].idUzytkownika!=idUzytkownika){
-            cout<<"Nie mozesz tego kontaktu usunac!\n"<<endl;
+        for(int i=0; i<iloscKotanktowUzytkownika; ++i) {
+            if(numerekID==ListaKontakow[i].id) {
+                numerKontaktuDoUsunecia=i;
+                jestKontakt=true;
+                break;
+            }
+        }
+        if(!jestKontakt) {
+            cout<<"Tego kontaktu nie mozesz usunac.\n"<<endl;
             return;
         }
-        jestKontakt=true;
         break;
+    }
     default:
         cout<<"Wybrano zla opcje!"<<endl<<endl;
         return;
-    }
-    if(!jestKontakt){
-        cout<<"Nie masz zadnych kontaktow.\n"<<endl;
-        return;
+        break;
     }
     cout<<ListaKontakow[numerKontaktuDoUsunecia].id<<endl;
     cout<<ListaKontakow[numerKontaktuDoUsunecia].imie<<endl;
@@ -369,6 +391,7 @@ void usunKontakt(int idUzytkownika) {
         break;
     case 1:
         cout<<"usunales priewszy element."<<endl<<endl;
+        idUsunietychKontaktow.push_back(ListaKontakow[0].id);
         if(ListaKontakow[0].id==numer_Id) {
             numer_Id--;
         }
@@ -376,27 +399,30 @@ void usunKontakt(int idUzytkownika) {
         break;
     case 2:
         cout<<"usunales ostatni element."<<endl<<endl;
+        idUsunietychKontaktow.push_back(ListaKontakow[iloscKotanktowUzytkownika-1].id);
+        if(ListaKontakow[iloscKotanktowUzytkownika-1].id==numer_Id) {
+            numer_Id--;
+        }
         ListaKontakow.pop_back();
-        numer_Id--;
+
         break;
     case 3:
         cout<<"usunety element o id "<<numerekID<<endl<<endl;
         if(ListaKontakow[numerKontaktuDoUsunecia].id==numer_Id) {
             numer_Id--;
         }
+        idUsunietychKontaktow.push_back(ListaKontakow[numerKontaktuDoUsunecia].id);
         ListaKontakow.erase(ListaKontakow.begin()+numerKontaktuDoUsunecia);
         break;
     default:
         cout<<"wybrales zla opcje"<<endl;
         break;
     }
-    if(!ListaKontakow.empty()) {
 
-        remove("Ksiazka_adresowa.txt");
-    }
 }
-void modyfikujKontakt() {
-    int opcjaUzytkonika,numerUzytkownika;
+void modyfikujKontakt(int idUzytkownika) {
+    bool jestKontakt=false;
+    int opcjaUzytkonika,numerUzytkownika,iloscKontaktowZalogowaniego=ListaKontakow.size();
     char znakk;
     kontakt ZmanaKontaktu;
     string imie, nazwisko, email, adres, numerTelefonu;
@@ -405,10 +431,29 @@ void modyfikujKontakt() {
         cout<<"Nie masz zadnych kontaktow."<<endl<<endl;
         return;
     } else {
-        cout<<"Podaj numer Id kontatkow, ktory chcesz zmienic."<<endl;
-        cout<<"Numer Id: ";
+        cout<<"Podaj nume id kontaktu, ktory chcesz usunac. Od 1 do "<<numer_Id<<"."<<endl;
+        cout<<"Id: ";
         cin>>numerUzytkownika;
-        numerUzytkownika--;
+        if(numerUzytkownika>numer_Id) {
+            cout<<"Za duzy numer Id podales!."<<endl<<endl;
+            return;
+        }
+        if(numerUzytkownika<=0) {
+            cout<<"Podales zbyt maly numer ID!."<<endl<<endl;
+            return;
+        }
+        for(int i=0; i<iloscKontaktowZalogowaniego; ++i) {
+            if(numerUzytkownika==ListaKontakow[i].id) {
+                numerUzytkownika=i;
+                jestKontakt=true;
+                break;
+            }
+        }
+        cout<<numerUzytkownika<<endl;
+        if(!jestKontakt){
+            cout<<"Tego Kontaktu nie mozesz edytowac."<<endl;
+            return;
+        }
         system("cls");
         cout<<ListaKontakow[numerUzytkownika].id<<endl;
         cout<<ListaKontakow[numerUzytkownika].imie<<endl;
@@ -434,31 +479,31 @@ void modyfikujKontakt() {
             cout<<"Podaj imie."<<endl;
             cout<<"Imie: ";
             cin>>imie;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,idUzytkownika,imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 2:
             cout<<"Podaj nazwisko."<<endl;
             cout<<"Nazwisko: ";
             cin>>nazwisko;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,idUzytkownika,ListaKontakow[numerUzytkownika].imie,nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 3:
             cout<<"Podaj numer telefonu."<<endl;
             cout<<"Numer telefonu: ";
             cin>>numerTelefonu;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,numerTelefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,idUzytkownika,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,numerTelefonu,ListaKontakow[numerUzytkownika].email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 4:
             cout<<"Podaj email."<<endl;
             cout<<"Email: ";
             cin>>email;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,email,ListaKontakow[numerUzytkownika].adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,idUzytkownika,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,email,ListaKontakow[numerUzytkownika].adres};
             break;
         case 5:
             cout<<"Podaj adres."<<endl;
             cout<<"Adres: ";
             cin>>adres;
-            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,NULL,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,adres};
+            ZmanaKontaktu= {ListaKontakow[numerUzytkownika].id,idUzytkownika,ListaKontakow[numerUzytkownika].imie,ListaKontakow[numerUzytkownika].nazwisko,ListaKontakow[numerUzytkownika].numer_telefonu,ListaKontakow[numerUzytkownika].email,adres};
             break;
         case 6:
             cout<<"Prosze podac poprawnie informacje."<<endl;
@@ -472,7 +517,7 @@ void modyfikujKontakt() {
             cin>>email;
             cout<<"Adres: ";
             cin>>adres;
-            ZmanaKontaktu= {numer_Id,NULL,imie,nazwisko,numerTelefonu,email,adres};
+            ZmanaKontaktu= {numer_Id,idUzytkownika,imie,nazwisko,numerTelefonu,email,adres};
         default:
             cout<<"Wybrano zla opcje!"<<endl;
             return;
@@ -533,21 +578,22 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
 
         case 4:
             system("cls");
-            pokaz_cala_ksiazke_adresowa(zalogowanyUzytkownik->id);
+            pokaz_cala_ksiazke_adresowa();
             break;
         case 5:
             system("cls");
-            usunKontakt(zalogowanyUzytkownik->id);
+            usunKontakt();
             break;
         case 6:
             system("cls");
-            modyfikujKontakt();
+            modyfikujKontakt(zalogowanyUzytkownik->id);
             break;
         case 7:
             zmianaHasla(zalogowanyUzytkownik);
             break;
         case 9:
             system("cls");
+            dodaj_kontakty_do_pliku_tekstowego();
             cout<<"Wylogowales sie.\n"<<endl;
             return;
             break;
@@ -557,7 +603,7 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
             break;
         }
     } while(opcja_uzytkownika!=9);
-
+    dodaj_kontakty_do_pliku_tekstowego();
 }
 void wczytajUzytkownikow() {
     fstream plik;
@@ -656,22 +702,24 @@ void logowanie() {
     }
     cout<<"Zly login lub haslo!\n"<<endl;
 }
-void zmianaHasla(uzytkownik *zalogowanyUzytkownik){
+void zmianaHasla(uzytkownik *zalogowanyUzytkownik) {
 
     string haslo, haslo2;
     uzytkownik ZmanaUzytkownika;
     int iloscKont=ListaUzytkownikow.size();
-    cout<<"podaj nowe haslo: ";cin>>haslo;
-    cout<<"powtorz haslo: ";cin>>haslo2;
+    cout<<"podaj nowe haslo: ";
+    cin>>haslo;
+    cout<<"powtorz haslo: ";
+    cin>>haslo2;
 
     system("cls");
-    if(haslo!=haslo2){
+    if(haslo!=haslo2) {
         cout<<"Hasla nie sa takie same!";
         return;
     }
-    ZmanaUzytkownika={zalogowanyUzytkownik->id,zalogowanyUzytkownik->login,haslo};
-    for(int i=0;i<iloscKont;++i){
-        if(zalogowanyUzytkownik->id==ListaUzytkownikow[i].id){
+    ZmanaUzytkownika= {zalogowanyUzytkownik->id,zalogowanyUzytkownik->login,haslo};
+    for(int i=0; i<iloscKont; ++i) {
+        if(zalogowanyUzytkownik->id==ListaUzytkownikow[i].id) {
             ListaUzytkownikow.erase(ListaUzytkownikow.begin()+i);
             ListaUzytkownikow.insert(ListaUzytkownikow.begin()+i,ZmanaUzytkownika);
             cout<<"Haslo zostalo zmienione.\n"<<endl;
@@ -679,7 +727,7 @@ void zmianaHasla(uzytkownik *zalogowanyUzytkownik){
         }
     }
 }
-void zapisUzytkownikowDoPliku(){
+void zapisUzytkownikowDoPliku() {
 
     ofstream plik;
     plik.open("Adresaci.txt", ios::out);
