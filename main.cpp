@@ -81,6 +81,7 @@ int main() {
         case 2:
             system("cls");
             rejestracja();
+            zapisUzytkownikowDoPliku();
             break;
         case 3:
             zapisUzytkownikowDoPliku();
@@ -560,6 +561,7 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
         case 1:
             system("cls");
             wprowadz_dane_do_nowego_kontaktu(zalogowanyUzytkownik->id);
+            dodaj_kontakty_do_pliku_tekstowego();
             break;
         case 2:
             system("cls");
@@ -583,13 +585,16 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
         case 5:
             system("cls");
             usunKontakt();
+            dodaj_kontakty_do_pliku_tekstowego();
             break;
         case 6:
             system("cls");
             modyfikujKontakt(zalogowanyUzytkownik->id);
+            dodaj_kontakty_do_pliku_tekstowego();
             break;
         case 7:
             zmianaHasla(zalogowanyUzytkownik);
+            zapisUzytkownikowDoPliku();
             break;
         case 9:
             system("cls");
