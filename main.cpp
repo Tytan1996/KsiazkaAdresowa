@@ -34,11 +34,9 @@ typedef struct uzytkownik {
 
 vector <kontakt> ListaKontakow;
 vector <uzytkownik> ListaUzytkownikow;
-vector <int> idUsunietychKontaktow;
 void wczytac_plik(int idUzytkownika);
 void wprowadz_dane_do_nowego_kontaktu();
 void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu,string email,string adres);
-void dodaj_kontakty_do_pliku_tekstowego();
 void pokaz_cala_ksiazke_adresowa();
 vector <kontakt> dodanie_wyniku_po_imieniu_do_wyszukiwarki(string szukanie_imie, int idUzytkownika);
 vector <kontakt> dodanie_wyniku_po_nazwisku_do_wyszukiwarki(string szukanie_nazwisko, int idUzytkownika);
@@ -52,6 +50,10 @@ void rejestracja();
 void logowanie();
 void zmianaHasla(uzytkownik *zalogowanyUzytkownik);
 void zapisUzytkownikowDoPliku();
+void dodajDoPlikuNowyKontakt();
+void modyfikujPlikTekstowy(int numerPozycjiKontaktu);
+void usunKontaktZPliku(int idUsunietegoKontaktu);
+void sprawdzId();
 
 int main() {
 
@@ -97,7 +99,7 @@ int main() {
     return 0;
 }
 void wczytac_plik(int idZalogowaniego) {
-    fstream plik,plikTymczasowy;
+    fstream plik;
     plik.open("Ksiazka_adresowa.txt", ios::in);
     if (plik.good()==false) {
         return;
@@ -189,72 +191,13 @@ void wprowadz_dane_do_nowego_kontaktu(int idUzytkownika) {
         system("cls");
         numer_Id++;
         dodaj_nowy_kontakt_do_pamiecy_komputera(idUzytkownika, imie, nazwisko,numer_telefonu, email, adres);
+        dodajDoPlikuNowyKontakt();
     }
 }
 void dodaj_nowy_kontakt_do_pamiecy_komputera(int idUzytkownika, string imie, string nazwisko,string numer_telefonu, string email,string adres ) {
     kontakt NowyKontakt= {numer_Id,idUzytkownika,imie,nazwisko,numer_telefonu,email,adres};
     ListaKontakow.push_back(NowyKontakt);
 
-}
-void dodaj_kontakty_do_pliku_tekstowego () {
-
-    fstream plik,plikTymcasowy;
-    int iloscKontakow=ListaKontakow.size();
-    int iloscUsunietychKontaktow=idUsunietychKontaktow.size();
-    int idKontaktu,numerek,ilosc1;
-    bool kontaktZapisany=false,usunietyKontakt=false;
-    string linia;
-    char buffor[50];
-    plik.open("Ksiazka_adresowa.txt", ios::in);
-    plikTymcasowy.open("Adresaci_tymczasowy.txt",ios::out);
-    plik.seekg(0,ios::beg);
-    while(getline(plik,linia)) {
-        numerek=linia.find("|");
-        ilosc1=linia.copy(buffor,numerek,0);
-        buffor[ilosc1]='\0';
-        idKontaktu=atoi(buffor);
-        if(!ListaKontakow.empty()) {
-            if(idKontaktu==ListaKontakow[0].id) {
-                plikTymcasowy<<ListaKontakow[0].id<<"|";
-                plikTymcasowy<<ListaKontakow[0].idUzytkownika<<"|";
-                plikTymcasowy<<ListaKontakow[0].imie<<"|";
-                plikTymcasowy<<ListaKontakow[0].nazwisko<<"|";
-                plikTymcasowy<<ListaKontakow[0].numer_telefonu<<"|";
-                plikTymcasowy<<ListaKontakow[0].email<<"|";
-                plikTymcasowy<<ListaKontakow[0].adres<<"|"<<endl;
-                ListaKontakow.erase(ListaKontakow.begin());
-                kontaktZapisany=true;
-            }
-        }
-        for(int j=0;j<iloscUsunietychKontaktow;++j){
-            if(idKontaktu==idUsunietychKontaktow[j]){
-                usunietyKontakt=true;
-            }
-        }
-        if(!kontaktZapisany && !usunietyKontakt) {
-            plikTymcasowy<<linia<<endl;
-        }
-        kontaktZapisany=false;
-        usunietyKontakt=false;
-
-    }
-    iloscKontakow=ListaKontakow.size();
-    for(int i=0; i<iloscKontakow; ++i) {
-
-        plikTymcasowy<<ListaKontakow[i].id<<"|";
-        plikTymcasowy<<ListaKontakow[i].idUzytkownika<<"|";
-        plikTymcasowy<<ListaKontakow[i].imie<<"|";
-        plikTymcasowy<<ListaKontakow[i].nazwisko<<"|";
-        plikTymcasowy<<ListaKontakow[i].numer_telefonu<<"|";
-        plikTymcasowy<<ListaKontakow[i].email<<"|";
-        plikTymcasowy<<ListaKontakow[i].adres<<"|"<<endl;
-
-    }
-    ListaKontakow.clear();
-    plik.close();
-    remove("Ksiazka_adresowa.txt");
-    plikTymcasowy.close();
-    rename("Adresaci_tymczasowy.txt", "Ksiazka_adresowa.txt");
 }
 void pokaz_cala_ksiazke_adresowa() {
     char znak;
@@ -322,7 +265,7 @@ void usunKontakt() {
     char potwierdzenie='n';
     bool jestKontakt=false;
     int iloscKotanktowUzytkownika=ListaKontakow.size();
-    int opcjaUzytkonika,numerekID,numerKontaktuDoUsunecia;
+    int opcjaUzytkonika,numerekID,numerKontaktuDoUsunecia,idUsunietegoKontaktu;
     if(ListaKontakow.empty()) {
         cout<<"Nie masz zadnych kontaktow."<<endl<<endl;
         return;
@@ -385,6 +328,7 @@ void usunKontakt() {
         return;
     }
 
+    idUsunietegoKontaktu=ListaKontakow[numerKontaktuDoUsunecia].id;
     system("cls");
     switch(opcjaUzytkonika) {
     case 0:
@@ -392,7 +336,6 @@ void usunKontakt() {
         break;
     case 1:
         cout<<"usunales priewszy element."<<endl<<endl;
-        idUsunietychKontaktow.push_back(ListaKontakow[0].id);
         if(ListaKontakow[0].id==numer_Id) {
             numer_Id--;
         }
@@ -400,7 +343,6 @@ void usunKontakt() {
         break;
     case 2:
         cout<<"usunales ostatni element."<<endl<<endl;
-        idUsunietychKontaktow.push_back(ListaKontakow[iloscKotanktowUzytkownika-1].id);
         if(ListaKontakow[iloscKotanktowUzytkownika-1].id==numer_Id) {
             numer_Id--;
         }
@@ -412,13 +354,14 @@ void usunKontakt() {
         if(ListaKontakow[numerKontaktuDoUsunecia].id==numer_Id) {
             numer_Id--;
         }
-        idUsunietychKontaktow.push_back(ListaKontakow[numerKontaktuDoUsunecia].id);
         ListaKontakow.erase(ListaKontakow.begin()+numerKontaktuDoUsunecia);
         break;
     default:
         cout<<"wybrales zla opcje"<<endl;
         break;
     }
+    usunKontaktZPliku(idUsunietegoKontaktu);
+    sprawdzId();
 
 }
 void modyfikujKontakt(int idUzytkownika) {
@@ -450,8 +393,7 @@ void modyfikujKontakt(int idUzytkownika) {
                 break;
             }
         }
-        cout<<numerUzytkownika<<endl;
-        if(!jestKontakt){
+        if(!jestKontakt) {
             cout<<"Tego Kontaktu nie mozesz edytowac."<<endl;
             return;
         }
@@ -531,6 +473,7 @@ void modyfikujKontakt(int idUzytkownika) {
         }
         system("cls");
         cout<<"Prowadzono zmane!"<<endl<<endl;
+        modyfikujPlikTekstowy(numerUzytkownika);
     }
 
 }
@@ -561,7 +504,6 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
         case 1:
             system("cls");
             wprowadz_dane_do_nowego_kontaktu(zalogowanyUzytkownik->id);
-            dodaj_kontakty_do_pliku_tekstowego();
             break;
         case 2:
             system("cls");
@@ -585,12 +527,10 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
         case 5:
             system("cls");
             usunKontakt();
-            dodaj_kontakty_do_pliku_tekstowego();
             break;
         case 6:
             system("cls");
             modyfikujKontakt(zalogowanyUzytkownik->id);
-            dodaj_kontakty_do_pliku_tekstowego();
             break;
         case 7:
             zmianaHasla(zalogowanyUzytkownik);
@@ -598,8 +538,8 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
             break;
         case 9:
             system("cls");
-            dodaj_kontakty_do_pliku_tekstowego();
             cout<<"Wylogowales sie.\n"<<endl;
+            ListaKontakow.clear();
             return;
             break;
 
@@ -608,7 +548,7 @@ void wyswietlMenuUzytkownika(uzytkownik *zalogowanyUzytkownik) {
             break;
         }
     } while(opcja_uzytkownika!=9);
-    dodaj_kontakty_do_pliku_tekstowego();
+    ListaKontakow.clear();
 }
 void wczytajUzytkownikow() {
     fstream plik;
@@ -734,6 +674,7 @@ void zmianaHasla(uzytkownik *zalogowanyUzytkownik) {
 }
 void zapisUzytkownikowDoPliku() {
 
+
     ofstream plik;
     plik.open("Adresaci.txt", ios::out);
     for(int i=0; i<iloscUzytkownikow-1; ++i) {
@@ -742,6 +683,103 @@ void zapisUzytkownikowDoPliku() {
         plik<<ListaUzytkownikow[i].login<<"|";
         plik<<ListaUzytkownikow[i].haslo<<"|"<<endl;
 
+    }
+    plik.close();
+}
+void dodajDoPlikuNowyKontakt() {
+
+    ofstream plik;
+    plik.open("Ksiazka_adresowa.txt", ios::app);
+    int numerOstatniegoKontaktu=ListaKontakow.size()-1;
+    plik<<ListaKontakow[numerOstatniegoKontaktu].id<<"|";
+    plik<<ListaKontakow[numerOstatniegoKontaktu].idUzytkownika<<"|";
+    plik<<ListaKontakow[numerOstatniegoKontaktu].imie<<"|";
+    plik<<ListaKontakow[numerOstatniegoKontaktu].nazwisko<<"|";
+    plik<<ListaKontakow[numerOstatniegoKontaktu].numer_telefonu<<"|";
+    plik<<ListaKontakow[numerOstatniegoKontaktu].email<<"|";
+    plik<<ListaKontakow[numerOstatniegoKontaktu].adres<<"|"<<endl;
+
+
+    plik.close();
+}
+void modyfikujPlikTekstowy(int numerPozycjiKontaktu) {
+
+    fstream plik,plikTymcasowy;
+    string linia;
+    char buffor[50];
+    int idKontaktuZPliku,numerek,ilosc1;
+    plik.open("Ksiazka_adresowa.txt", ios::in);
+    plikTymcasowy.open("Adresaci_tymczasowy.txt",ios::out);
+    plik.seekg(0,ios::beg);
+    while(getline(plik,linia)) {
+        numerek=linia.find("|");
+        ilosc1=linia.copy(buffor,numerek,0);
+        buffor[ilosc1]='\0';
+        idKontaktuZPliku=atoi(buffor);
+        if(idKontaktuZPliku==ListaKontakow[numerPozycjiKontaktu].id) {
+            plikTymcasowy<<ListaKontakow[numerPozycjiKontaktu].id<<"|";
+            plikTymcasowy<<ListaKontakow[numerPozycjiKontaktu].idUzytkownika<<"|";
+            plikTymcasowy<<ListaKontakow[numerPozycjiKontaktu].imie<<"|";
+            plikTymcasowy<<ListaKontakow[numerPozycjiKontaktu].nazwisko<<"|";
+            plikTymcasowy<<ListaKontakow[numerPozycjiKontaktu].numer_telefonu<<"|";
+            plikTymcasowy<<ListaKontakow[numerPozycjiKontaktu].email<<"|";
+            plikTymcasowy<<ListaKontakow[numerPozycjiKontaktu].adres<<"|"<<endl;
+        } else {
+            plikTymcasowy<<linia<<endl;
+        }
+
+    }
+    plik.close();
+    remove("Ksiazka_adresowa.txt");
+    plikTymcasowy.close();
+    rename("Adresaci_tymczasowy.txt", "Ksiazka_adresowa.txt");
+    plik.close();
+
+}
+void usunKontaktZPliku(int idUsunietegoKontaktu) {
+
+    int idKontaktu,numerek,ilosc1;
+    string linia;
+    char buffor[50];
+    fstream plik,plikTymcasowy;
+    plik.open("Ksiazka_adresowa.txt", ios::in);
+    plikTymcasowy.open("Adresaci_tymczasowy.txt",ios::out);
+    plik.seekg(0,ios::beg);
+
+    while(getline(plik,linia)) {
+        numerek=linia.find("|");
+        ilosc1=linia.copy(buffor,numerek,0);
+        buffor[ilosc1]='\0';
+        idKontaktu=atoi(buffor);
+        if(idKontaktu!=idUsunietegoKontaktu) {
+            plikTymcasowy<<linia<<endl;
+        }
+    }
+
+    plik.close();
+    remove("Ksiazka_adresowa.txt");
+    plikTymcasowy.close();
+    rename("Adresaci_tymczasowy.txt", "Ksiazka_adresowa.txt");
+
+}
+void sprawdzId() {
+
+    fstream plik;
+    plik.open("Ksiazka_adresowa.txt", ios::in);
+    if (plik.good()==false) {
+        numer_Id=0;
+        return;
+    }
+    string linia;
+    char buffor[50];
+    int numerek,ilosc1,id;
+    plik.seekg(0,ios::beg);
+    while(getline(plik,linia)) {
+        numerek=linia.find("|");
+        ilosc1=linia.copy(buffor,numerek,0);
+        buffor[ilosc1]='\0';
+        id=atoi(buffor);
+        numer_Id=id;
     }
     plik.close();
 }
